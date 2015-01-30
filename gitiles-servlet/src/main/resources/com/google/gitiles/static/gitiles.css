@@ -128,10 +128,9 @@ table.list td {
 .repository-refs {
   float: left;
   width: 200px;
-  margin-left: -100%;
+  margin-left: 0;
 }
 .repository-shortlog-wrapper {
-  float: left;
   width: 100%;
 }
 .repository-shortlog {

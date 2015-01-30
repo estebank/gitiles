@@ -59,22 +59,18 @@
     git clone {$cloneUrl}
 </textarea>
 
-{if $hasLog and (length($branches) or length($tags))}
+{if length($branches) or length($tags)}
+  <div class="repository-refs">
+    {call .branches_ data="all" /}
+    {call .tags_ data="all" /}
+  </div>
+{/if}
+{if $hasLog}
   <div class="repository-shortlog-wrapper">
     <div class="repository-shortlog">
       {call .streamingPlaceholder /}
     </div>
   </div>
-
-  <div class="repository-refs">
-    {call .branches_ data="all" /}
-    {call .tags_ data="all" /}
-  </div>
-{elseif $hasLog}
-  {call .streamingPlaceholder /}
-{elseif length($branches) or length($tags)}
-  {call .branches_ data="all" /}
-  {call .tags_ data="all" /}
 {/if}
 
 {call .footer /}
