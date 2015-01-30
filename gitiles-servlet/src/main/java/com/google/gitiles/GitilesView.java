@@ -654,9 +654,9 @@ public class GitilesView {
         "hasSingleTree must be null for %s view", type);
     String path = this.path;
     ImmutableList.Builder<Map<String, String>> breadcrumbs = ImmutableList.builder();
-    breadcrumbs.add(breadcrumb(hostName, hostIndex().copyFrom(this)));
+    breadcrumbs.add(breadcrumb(hostName, hostIndex().copyFrom(this), "hostname"));
     if (repositoryName != null) {
-      breadcrumbs.add(breadcrumb(repositoryName, repositoryIndex().copyFrom(this)));
+      breadcrumbs.add(breadcrumb(repositoryName, repositoryIndex().copyFrom(this), "repositoryName"));
     }
     if (type == Type.DIFF) {
       // TODO(dborowitz): Tweak the breadcrumbs template to allow us to render
@@ -667,21 +667,21 @@ public class GitilesView {
         // TODO(dborowitz): Add something in the navigation area (probably not
         // a breadcrumb) to allow switching between /+log/ and /+/.
         if (oldRevision == Revision.NULL) {
-          breadcrumbs.add(breadcrumb(revision.getName(), log().copyFrom(this).setPathPart(null)));
+          breadcrumbs.add(breadcrumb(revision.getName(), log().copyFrom(this).setPathPart(null), "revision"));
         } else {
-          breadcrumbs.add(breadcrumb(getRevisionRange(), log().copyFrom(this).setPathPart(null)));
+          breadcrumbs.add(breadcrumb(getRevisionRange(), log().copyFrom(this).setPathPart(null), "revision"));
         }
       } else {
-        breadcrumbs.add(breadcrumb(Constants.HEAD, log().copyFrom(this)));
+        breadcrumbs.add(breadcrumb(Constants.HEAD, log().copyFrom(this), "head"));
       }
       path = Strings.emptyToNull(path);
     } else if (revision != Revision.NULL) {
-      breadcrumbs.add(breadcrumb(revision.getName(), revision().copyFrom(this)));
+      breadcrumbs.add(breadcrumb(revision.getName(), revision().copyFrom(this), "revision"));
     }
     if (path != null) {
       if (type != Type.LOG && type != Type.REFS) {
         // The "." breadcrumb would be no different for LOG or REFS.
-        breadcrumbs.add(breadcrumb(".", copyWithPath(false).setPathPart("")));
+        breadcrumbs.add(breadcrumb(".", copyWithPath(false).setPathPart(""), "root_tree"));
       }
       StringBuilder cur = new StringBuilder();
       List<String> parts = Paths.SPLITTER.omitEmptyStrings().splitToList(path);
@@ -698,14 +698,17 @@ public class GitilesView {
         if (hasSingleTree != null && i < parts.size() - 1 && hasSingleTree.get(i)) {
           builder.replaceParam(PathServlet.AUTODIVE_PARAM, PathServlet.NO_AUTODIVE_VALUE);
         }
-        breadcrumbs.add(breadcrumb(part, builder));
+        breadcrumbs.add(breadcrumb(part, builder, "path"));
       }
     }
     return breadcrumbs.build();
   }
 
   private static Map<String, String> breadcrumb(String text, Builder url) {
-    return ImmutableMap.of("text", text, "url", url.toUrl());
+    return breadcrumb(text, url, "");
+  }
+  private static Map<String, String> breadcrumb(String text, Builder url, String type) {
+    return ImmutableMap.of("text", text, "url", url.toUrl(), "type", type);
   }
 
   private Builder copyWithPath(boolean isLeaf) {
