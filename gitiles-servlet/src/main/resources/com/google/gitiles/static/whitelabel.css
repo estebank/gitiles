@@ -1,0 +1,11 @@
+.breadcrumbs .hostname {
+  width: 14px;
+  color: transparent;
+  display: inline-block;
+}
+.breadcrumbs .hostname:before,
+h1:before {
+  font-family: FontAwesome;
+  color: #222222;
+  content: "\f09b";
+}
