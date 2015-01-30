@@ -45,6 +45,10 @@ h2 {
   font-size: 150%;
   border-bottom: #ddd solid 1px; /* BORDER */
 }
+.breadcrumbs a {
+  padding: 0 .5em;
+  margin: 0 -.2em;
+}
 table.list {
   margin-top: 1em;
   width: 90%;

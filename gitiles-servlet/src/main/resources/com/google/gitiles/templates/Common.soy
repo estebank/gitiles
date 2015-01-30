@@ -74,11 +74,27 @@
   {if $breadcrumbs and length($breadcrumbs)}
     <div class="breadcrumbs">
       {foreach $entry in $breadcrumbs}
-        {if not isFirst($entry)}{sp}/{sp}{/if}
-        {if not isLast($entry)}
-          <a href="{$entry.url}">{$entry.text}</a>
+        {if $entry.type == 'root_tree'}
+        {elseif $entry.type == 'revision'}:
+        {elseif index($entry) == 4}
+        {elseif not isFirst($entry)}/
+        {/if}
+        {if $entry.type == 'root_tree'}
+          <a href="{$entry.url}"
+            {if $entry.type} class="{$entry.type}"{/if}
+            >/</a>
+        {elseif $entry.type == 'revision'}
+          <a href="{$entry.url}"
+            class="last_part {if $entry.type}{$entry.type}{/if}"
+            >{$entry.text}</a>
+        {elseif not isLast($entry)}
+          <a href="{$entry.url}"
+            {if $entry.type} class="{$entry.type}"{/if}
+            >{$entry.text}</a>
         {else}
-          {$entry.text}
+          <a href="{$entry.url}"
+            class="last_part {if $entry.type}{$entry.type}{/if}"
+            >{$entry.text}</a>
         {/if}
       {/foreach}
     </div>
