@@ -24,8 +24,13 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 
+import org.eclipse.jgit.lib.Config;
+
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 import com.google.gson.FieldNamingPolicy;
@@ -38,6 +43,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -197,7 +205,30 @@ public abstract class BaseServlet extends HttpServlet {
    */
   protected void renderHtml(HttpServletRequest req, HttpServletResponse res, String templateName,
       Map<String, ?> soyData) throws IOException {
-    renderer.render(res, templateName, startHtmlResponse(req, res, soyData));
+    Map<String, ?> mutableData = addConfigCss(
+        (Map<String, Object>) soyData,
+        getAccess(req).getConfig());
+    renderer.render(res, templateName, startHtmlResponse(req, res, mutableData));
+  }
+
+  private Map<String, ?> addConfigCss(Map<String, ?> data, Config config) {
+    Map<String, Object> mutableData = Maps.newHashMap(data);
+
+    List<String> extraCss;  // make css List variable mutable to extend it
+    if (!mutableData.containsKey("css")) {
+      extraCss = Lists.<String> newArrayList();
+    } else {
+      extraCss = Lists.<String> newArrayList(
+          (List<String>) mutableData.get("css"));
+    }
+    mutableData.put("css", extraCss);  // replace ImmutableList with same as List
+
+    // Add all the extraCss urls in the config file to css List variable
+    ((List) (mutableData.get("css")))
+        .addAll(Arrays.asList(
+                config.getStringList("gitiles", null, "extraCss")));
+
+    return mutableData;
   }
 
   /**
@@ -221,7 +252,11 @@ public abstract class BaseServlet extends HttpServlet {
   protected OutputStream startRenderStreamingHtml(HttpServletRequest req,
       HttpServletResponse res, String templateName, Map<String, ?> soyData) throws IOException {
     req.setAttribute(STREAMING_ATTRIBUTE, true);
-    return renderer.renderStreaming(res, templateName, startHtmlResponse(req, res, soyData));
+
+    Map<String, ?> mutableData = addConfigCss(
+        (Map<String, Object>) soyData,
+        getAccess(req).getConfig());
+    return renderer.renderStreaming(res, templateName, startHtmlResponse(req, res, mutableData));
   }
 
   private Map<String, ?> startHtmlResponse(HttpServletRequest req, HttpServletResponse res,

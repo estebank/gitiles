@@ -28,6 +28,7 @@
  * @param tags list of tag objects with url and name keys.
  * @param? moreTagsUrl URL to show more branches, if necessary.
  * @param hasLog whether a log should be shown for HEAD.
+ * @param? css optional list of CSS URLs to include.
  */
 {template .repositoryIndex}
 {call .header}
@@ -36,6 +37,7 @@
   {param menuEntries: $menuEntries /}
   {param headerVariant: $headerVariant /}
   {param breadcrumbs: $breadcrumbs /}
+  {param css: $css /}
 {/call}
 
 {if $description or $mirroredFromUrl}

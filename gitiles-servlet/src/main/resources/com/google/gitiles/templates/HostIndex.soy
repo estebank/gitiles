@@ -22,6 +22,7 @@
  * @param baseUrl base URL for repositories.
  * @param repositories list of repository description maps with name, cloneUrl,
  *     and optional description values.
+ * @param? css optional list of CSS URLs to include.
  */
 {template .hostIndex}
 {call .header}
@@ -29,6 +30,7 @@
   {param menuEntries: $menuEntries /}
   {param breadcrumbs: null /}
   {param headerVariant: $headerVariant /}
+  {param css: $css /}
 {/call}
 
 {if length($repositories)}

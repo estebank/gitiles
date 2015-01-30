@@ -23,6 +23,7 @@
  * @param breadcrumbs breadcrumbs for this page.
  * @param branches list of branch objects with url, name, and isHead keys.
  * @param tags list of tag objects with url and name keys.
+ * @param css list of css files to be imported.
  */
 {template .refsDetail}
 {call .header}
@@ -31,6 +32,7 @@
   {param menuEntries: $menuEntries /}
   {param headerVariant: $headerVariant /}
   {param breadcrumbs: $breadcrumbs /}
+  {param css: $css /}
 {/call}
 
 {if length($branches)}

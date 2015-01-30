@@ -469,6 +469,8 @@ public class PathServlet extends BaseServlet {
         "title", ViewFilter.getView(req).getPathPart(),
         "breadcrumbs", view.getBreadcrumbs(wr.hasSingleTree),
         "type", wr.type.toString(),
+        "css", ImmutableList.<String> of(
+            renderer.globals.get("gitiles.PRETTIFY_CSS_URL")),
         "data", data));
   }
 
